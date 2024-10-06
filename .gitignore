@@ -41,3 +41,20 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Flutter
+.packages
+.vscode/
+build/
+ios/Pods/
+pubspec.lock
+
+# Android
+.gradle
+/local.properties
+.idea/workspace.xml
+.idea/libraries
+*.jks
+
+# Others
+.env
