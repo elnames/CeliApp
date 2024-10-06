@@ -21,7 +21,7 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false, // Eliminar el ícono de volver
-        title: Text('Home'),
+        title: Text('CeliApp'),
         actions: [
           IconButton(
             icon: Icon(Icons.account_circle),
