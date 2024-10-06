@@ -1,0 +1,51 @@
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+    id "dev.flutter.flutter-gradle-plugin"
+}
+apply plugin: 'com.android.application'
+
+android {
+    namespace "com.ayuwoki.celiapp"
+    compileSdkVersion 34
+
+    defaultConfig {
+        applicationId "com.ayuwoki.celiapp"
+        minSdkVersion 23
+        targetSdkVersion 34
+        versionCode 1
+        versionName "1.0"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+
+apply plugin: 'com.google.gms.google-services'
+
+dependencies {
+    implementation 'com.google.firebase:firebase-analytics:21.2.0'
+    implementation platform('com.google.firebase:firebase-bom:32.1.0')
+    implementation 'com.google.firebase:firebase-auth'
+    implementation 'com.google.firebase:firebase-firestore'
+}
+flutter {
+    source = "../.."
+}
+
+

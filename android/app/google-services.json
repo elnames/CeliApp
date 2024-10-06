@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "360503101068",
+    "project_id": "celiapp-c2239",
+    "storage_bucket": "celiapp-c2239.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:360503101068:android:ef0b12072372ba0fc59da9",
+        "android_client_info": {
+          "package_name": "com.ayuwoki.celiapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCI3h3A1uxm30VHhZSXoEPDFY4auQlMelY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
