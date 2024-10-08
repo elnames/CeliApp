@@ -51,20 +51,20 @@ Asegúrate de incluir las siguientes dependencias en el archivo `pubspec.yaml`:
 
 1. **Instalar Flutter SDK**: Descarga e instala Flutter desde [flutter.dev](https://flutter.dev/docs/get-started/install). Sigue las instrucciones para configurar el `PATH` del sistema.
 
-2. **Configurar JDK**: Instala JDK 17 o superior y configura la variable de entorno `JAVA_HOME` apuntando al directorio de instalación.
+2. **Configurar JDK**: Instala JDK 17 y configura la variable de entorno `JAVA_HOME` apuntando al directorio de instalación.
 
-3. **Clonar el Repositorio**: Abre la terminal y ejecuta:
+4. **Clonar el Repositorio**: Abre la terminal y ejecuta:
    ```sh
    git clone https://github.com/elnames/CeliApp.git
    cd celiapp
    ```
 
-4. **Instalar Dependencias**: Navega al directorio del proyecto y ejecuta el siguiente comando para instalar las dependencias necesarias:
+5. **Instalar Dependencias**: Navega al directorio del proyecto y ejecuta el siguiente comando para instalar las dependencias necesarias:
    ```sh
    flutter pub get
    ```
 
-5. **Configurar Google Maps API Key**:
+6. **Configurar Google Maps API Key**:
    - Navega al archivo `android/app/src/main/AndroidManifest.xml`.
    - Agrega tu API Key de Google Maps en el siguiente campo:
      ```xml
@@ -73,14 +73,14 @@ Asegúrate de incluir las siguientes dependencias en el archivo `pubspec.yaml`:
        android:value="TU_API_KEY_AQUI"/>
      ```
 
-6. **Conectar Firebase**: Configura el proyecto con Firebase siguiendo las instrucciones en la consola de Firebase. Asegúrate de agregar los archivos `google-services.json` y `GoogleService-Info.plist` en las carpetas correspondientes para Android e iOS.
+7. **Conectar Firebase**: Configura el proyecto con Firebase siguiendo las instrucciones en la consola de Firebase. Asegúrate de agregar los archivos `google-services.json` y `GoogleService-Info.plist` en las carpetas correspondientes para Android e iOS.
 
-7. **Ejecutar la Aplicación**: Conecta un dispositivo físico o inicia un emulador desde Android Studio, luego ejecuta el siguiente comando:
+8. **Ejecutar la Aplicación**: Conecta un dispositivo físico o inicia un emulador desde Android Studio, luego ejecuta el siguiente comando:
    ```sh
    flutter run
    ```
 
-8. **Solucionar Problemas Comunes**:
+9. **Solucionar Problemas Comunes**:
    - **Error de Versiones de Java**: Asegúrate de tener configurado JDK 17.
    - **Problemas de Conexión con Firebase**: Verifica la configuración y los archivos de Google Services.
    - **Mapa no Carga**: Verifica la clave de la API de Google Maps y los permisos necesarios en el manifest.
