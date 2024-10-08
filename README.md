@@ -87,9 +87,11 @@ Asegúrate de incluir las siguientes dependencias en el archivo `pubspec.yaml`:
 
 
 Comandos para inicializar correctamente:
+  ```sh
+    flutter clean
+    flutter pub get
+    flutter run
+   ```
 
--flutter clean
--flutter pub get
--flutter run
 
 *Si hay algun problema iniciar con "flutter run -v" para revisar el log e identificar el error*
