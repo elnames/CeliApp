@@ -28,12 +28,12 @@
 
 ## Aplicaciones y Dependencias Necesarias
 
-1. **Flutter**: Para el desarrollo multiplataforma.
-2. **Dart**: Lenguaje de programación para desarrollar la aplicación.
-3. **Google Maps Flutter**: Plugin para mostrar mapas de Google en la aplicación.
-4. **Firebase**: Para la autenticación de usuarios y almacenamiento de datos.
-5. **provider**: Manejo del estado de la aplicación.
-6. **qr_code_scanner**: Plugin para escanear códigos de barras.
+1. **Flutter**: Para el desarrollo multiplataforma. link
+3. **Dart**: Lenguaje de programación para desarrollar la aplicación.
+4. **Google Maps Flutter**: Plugin para mostrar mapas de Google en la aplicación.
+5. **Firebase**: Para la autenticación de usuarios y almacenamiento de datos.
+6. **provider**: Manejo del estado de la aplicación.
+7. **qr_code_scanner**: Plugin para escanear códigos de barras.
 
 Asegúrate de incluir las siguientes dependencias en el archivo `pubspec.yaml`:
 
@@ -55,7 +55,7 @@ Asegúrate de incluir las siguientes dependencias en el archivo `pubspec.yaml`:
 
 3. **Clonar el Repositorio**: Abre la terminal y ejecuta:
    ```sh
-   git clone <URL_DEL_REPOSITORIO>
+   git clone https://github.com/elnames/CeliApp.git
    cd celiapp
    ```
 
