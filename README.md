@@ -1,96 +1,95 @@
 # CeliApp
 
-**CeliApp** es una aplicación móvil desarrollada con **Flutter** que tiene como objetivo ayudar a las personas con intolerancia al gluten a encontrar productos sin gluten, localizar tiendas cercanas que ofrezcan estos productos y gestionar su consumo de una manera sencilla y eficiente. La aplicación incluye funcionalidades como el registro de tiendas y productos sin gluten, revisión de productos escaneados, y más.
+**CeliApp** es una aplicación creada para personas celíacas que deben convivir con una dieta sin gluten. Su principal objetivo es facilitar la búsqueda y compra de productos libres de gluten, así como la consulta de información sobre alimentos y medicamentos seguros. Además, permite a los usuarios identificar tiendas cercanas que ofrecen estos productos, y compartir recomendaciones con la comunidad.
 
-## Tecnologías Utilizadas
-- **Flutter**: Framework de desarrollo móvil para Android e iOS.
-- **Firebase**: Servicios para autenticación y almacenamiento de información del usuario.
-- **Google Cloud Platform (GCP)**: Para integración de servicios adicionales y almacenamiento de datos.
-- **Firebase Firestore**: Para almacenar información sobre alimentos favoritos, tiendas favoritas y calificaciones.
-- **Firebase Authentication**: Para manejar el registro e inicio de sesión de usuarios.
-- **Google Maps**: Para localizar las tiendas cercanas que ofrecen productos sin gluten.
+## Funcionalidades
 
-## Características Principales
-- **Registro e inicio de sesión de usuarios**: Los usuarios pueden registrarse, iniciar sesión y gestionar su perfil.
-- **Modo Invitado**: Se permite la navegación limitada en modo invitado, con acceso a los productos recomendados y mapas, pero con restricciones para acceder a detalles completos.
-- **Alimentos y Tiendas Favoritas**: Los usuarios pueden marcar productos y tiendas como favoritos y gestionar sus preferencias.
-- **Mapa de Locales Cercanos**: Visualización en mapa de los locales más cercanos con productos sin gluten.
-- **Escaneo de Códigos de Barras**: Escanea productos para verificar si son aptos para personas celíacas.
+1. **Inicio Personalizado**: Al iniciar sesión, el usuario es saludado y presentado con una página de inicio que muestra productos recomendados y locales cercanos.
 
-## Capturas de Pantalla
-*(Agrega aquí capturas de pantalla del login, pantalla principal, y otras pantallas importantes de la app para ilustrar las funcionalidades.)*
+2. **Búsqueda de Productos y Tiendas**: Los usuarios pueden buscar locales y productos sin gluten utilizando la barra de búsqueda.
 
-## Instalación y Configuración
-Para ejecutar este proyecto en tu máquina local, sigue los siguientes pasos:
+3. **Mapa de Tiendas Cercanas**: Utilizando Google Maps, la aplicación muestra la ubicación de tiendas cercanas que venden productos sin gluten.
 
-### Requisitos Previos
-- **Flutter SDK**: [Instalar Flutter](https://docs.flutter.dev/get-started/install)
-- **Android Studio o VS Code**: Para emulación y desarrollo.
-- **Android SDK**: Para ejecutar el emulador Android.
-- **Git**: Para clonar el repositorio.
+4. **Recomendaciones de Comida**: Productos recomendados para una dieta sin gluten se muestran en la pantalla de inicio, con opciones para ver detalles o guardar como favorito.
 
-### Paso a Paso
-1. **Clonar el Repositorio**
-   
-   Abre la terminal y ejecuta:
-   ```bash
-   git clone https://github.com/tu_usuario/CeliApp.git
-   cd CeliApp
+5. **Escaneo de Códigos de Barras**: La app permite escanear el código de barras de un producto para verificar si es libre de gluten.
+
+6. **Sistema de Favoritos**: Los usuarios pueden marcar tiendas y productos como favoritos para acceder rápidamente en el futuro.
+
+7. **Publicación de Información**: Los usuarios pueden inscribir tiendas o emprendimientos y publicar comidas recomendadas.
+
+## Requisitos para Ser Ejecutado
+
+1. **Sistema Operativo**: Windows, macOS o Linux.
+2. **Flutter SDK**: Versión 3.0 o superior.
+3. **JDK**: Java Development Kit versión 17 o superior.
+4. **Android Studio o Visual Studio Code**: Para la edición del código y la emulación de la aplicación.
+5. **API Key de Google Maps**: Necesaria para el uso de la funcionalidad de mapas.
+
+## Aplicaciones y Dependencias Necesarias
+
+1. **Flutter**: Para el desarrollo multiplataforma.
+2. **Dart**: Lenguaje de programación para desarrollar la aplicación.
+3. **Google Maps Flutter**: Plugin para mostrar mapas de Google en la aplicación.
+4. **Firebase**: Para la autenticación de usuarios y almacenamiento de datos.
+5. **provider**: Manejo del estado de la aplicación.
+6. **qr_code_scanner**: Plugin para escanear códigos de barras.
+
+Asegúrate de incluir las siguientes dependencias en el archivo `pubspec.yaml`:
+
+```yaml
+  dependencies:
+    flutter:
+      sdk: flutter
+    google_maps_flutter: ^2.0.6
+    firebase_auth: ^4.0.0
+    cloud_firestore: ^3.0.3
+    provider: ^6.0.1
+```
+
+## Paso a Paso para Ejecutar la Aplicación
+
+1. **Instalar Flutter SDK**: Descarga e instala Flutter desde [flutter.dev](https://flutter.dev/docs/get-started/install). Sigue las instrucciones para configurar el `PATH` del sistema.
+
+2. **Configurar JDK**: Instala JDK 17 o superior y configura la variable de entorno `JAVA_HOME` apuntando al directorio de instalación.
+
+3. **Clonar el Repositorio**: Abre la terminal y ejecuta:
+   ```sh
+   git clone <URL_DEL_REPOSITORIO>
+   cd celiapp
    ```
 
-2. **Instalar las Dependencias**
-   
-   Ejecuta el siguiente comando para instalar todas las dependencias necesarias que se encuentran en el archivo `pubspec.yaml`:
-   ```bash
+4. **Instalar Dependencias**: Navega al directorio del proyecto y ejecuta el siguiente comando para instalar las dependencias necesarias:
+   ```sh
    flutter pub get
    ```
 
-3. **Configurar Firebase**
-   
-   Debes configurar Firebase para Android e iOS:
-   - Ve a la [Consola de Firebase](https://console.firebase.google.com/) y crea un nuevo proyecto.
-   - Descarga el archivo `google-services.json` para Android y agrégalo a la carpeta `android/app` de tu proyecto.
-   - Configura el proyecto para iOS siguiendo las instrucciones de Firebase si es necesario.
+5. **Configurar Google Maps API Key**:
+   - Navega al archivo `android/app/src/main/AndroidManifest.xml`.
+   - Agrega tu API Key de Google Maps en el siguiente campo:
+     ```xml
+     <meta-data
+       android:name="com.google.android.geo.API_KEY"
+       android:value="TU_API_KEY_AQUI"/>
+     ```
 
-4. **Configurar el Mapa de Google**
-   
-   Para la funcionalidad del mapa de locales cercanos, necesitas obtener una API Key de [Google Maps](https://developers.google.com/maps/documentation/android-sdk/get-api-key) y configurarla:
-   - Agrega la API Key en el archivo `AndroidManifest.xml`.
-   - Asegúrate de habilitar la API de Maps desde la consola de Google Cloud.
+6. **Conectar Firebase**: Configura el proyecto con Firebase siguiendo las instrucciones en la consola de Firebase. Asegúrate de agregar los archivos `google-services.json` y `GoogleService-Info.plist` en las carpetas correspondientes para Android e iOS.
 
-5. **Ejecutar la Aplicación**
-   
-   Puedes ejecutar la aplicación en un dispositivo físico o un emulador.
-   - Conecta un dispositivo físico con la depuración USB habilitada o ejecuta un emulador de Android.
-   - Ejecuta el siguiente comando:
-   ```bash
+7. **Ejecutar la Aplicación**: Conecta un dispositivo físico o inicia un emulador desde Android Studio, luego ejecuta el siguiente comando:
+   ```sh
    flutter run
    ```
 
-### Problemas Comunes
-- **Error de Versión de Gradle**: Si encuentras problemas con la versión de Gradle, asegúrate de actualizar el archivo `gradle-wrapper.properties` para usar una versión compatible con Java y Flutter (por ejemplo, `distributionUrl=https\://services.gradle.org/distributions/gradle-8.0-all.zip`).
-- **Firebase No Configurado**: Verifica que los archivos de configuración `google-services.json` (Android) o `GoogleService-Info.plist` (iOS) estén correctamente ubicados.
+8. **Solucionar Problemas Comunes**:
+   - **Error de Versiones de Java**: Asegúrate de tener configurado JDK 17.
+   - **Problemas de Conexión con Firebase**: Verifica la configuración y los archivos de Google Services.
+   - **Mapa no Carga**: Verifica la clave de la API de Google Maps y los permisos necesarios en el manifest.
 
-## Uso
-- **Modo Invitado**: Al abrir la aplicación sin registrarse o iniciar sesión, se accederá al home con funcionalidades limitadas.
-- **Modo Usuario Registrado**: Después de iniciar sesión o registrarse, el usuario podrá acceder a todas las funcionalidades, incluyendo la gestión de favoritos, acceso a mapas completos y detalles de productos.
 
-## Contribución
-Este proyecto está abierto a contribuciones. Si quieres colaborar:
-1. **Fork** el repositorio.
-2. Crea una nueva **rama** con la funcionalidad o corrección:
-   ```bash
-   git checkout -b feature/nueva-funcionalidad
-   ```
-3. **Confirma** tus cambios y sube la rama:
-   ```bash
-   git commit -m "Agregada nueva funcionalidad"
-   git push origin feature/nueva-funcionalidad
-   ```
-4. Abre un **Pull Request** para revisar tus cambios.
+Comandos para inicializar correctamente:
 
-## Licencia
-Este proyecto está bajo la licencia MIT. Puedes consultar el archivo [LICENSE](LICENSE) para más detalles.
+-flutter clean
+-flutter pub get
+-flutter run
 
-## Contacto
-Si tienes alguna pregunta o sugerencia, no dudes en abrir un **issue** o contactarme directamente a través de GitHub.
+*Si hay algun problema iniciar con "flutter run -v" para revisar el log e identificar el error*
