@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
+
   @override
   _RegisterScreenState createState() => _RegisterScreenState();
 }
@@ -22,7 +24,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
       });
       try {
         // Create user with email and password
-        UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+        UserCredential userCredential =
+            await _auth.createUserWithEmailAndPassword(
           email: _email,
           password: _password,
         );
@@ -39,7 +42,6 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
         // Navigate to the home screen
         Navigator.pushReplacementNamed(context, '/home');
-
       } on FirebaseAuthException catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Error: ${e.message}')),
@@ -56,7 +58,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Registro'),
+        title: const Text('Registro'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -66,7 +68,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TextFormField(
-                decoration: InputDecoration(labelText: 'Nombre'),
+                decoration: const InputDecoration(labelText: 'Nombre'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Por favor ingresa tu nombre';
@@ -80,7 +82,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 },
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Correo'),
+                decoration: const InputDecoration(labelText: 'Correo'),
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -97,7 +99,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 },
               ),
               TextFormField(
-                decoration: InputDecoration(labelText: 'Contraseña'),
+                decoration: const InputDecoration(labelText: 'Contraseña'),
                 obscureText: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -113,12 +115,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   });
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               _isLoading
-                  ? Center(child: CircularProgressIndicator())
+                  ? const Center(child: CircularProgressIndicator())
                   : ElevatedButton(
                       onPressed: _register,
-                      child: Text('Registrarse'),
+                      child: const Text('Registrarse'),
                     ),
             ],
           ),

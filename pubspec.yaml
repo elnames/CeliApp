@@ -14,10 +14,13 @@ dependencies:
   firebase_storage: ^12.3.0
   provider: ^6.0.0
   google_maps_flutter: ^2.1.8
+ # location: ^4.4.0
   flutter_lints: ^2.0.0
 
 flutter:
   uses-material-design: true
 
   assets:
-    - assets/logo.PNG
+    - assets/images/logo.png
+    - assets/images/pan.png
+    - assets/images/pastas.png
