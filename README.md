@@ -33,7 +33,6 @@
 4. **Google Maps Flutter**: Plugin para mostrar mapas de Google en la aplicación.
 5. **Firebase**: Para la autenticación de usuarios y almacenamiento de datos.
 6. **provider**: Manejo del estado de la aplicación.
-7. **qr_code_scanner**: Plugin para escanear códigos de barras.
 
 Asegúrate de incluir las siguientes dependencias en el archivo `pubspec.yaml`:
 
