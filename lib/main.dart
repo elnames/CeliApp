@@ -1,44 +1,73 @@
-// main.dart
 import 'package:flutter/material.dart';
-import 'package:celiapp/screens/loading_screen.dart';
-import 'package:celiapp/screens/home_screen.dart';
-import 'package:celiapp/screens/login_screen.dart';
-import 'package:celiapp/screens/register_screen.dart';
-import 'package:celiapp/screens/user_settings_screen.dart';
-import 'package:celiapp/screens/recommended_products_screen.dart';
-import 'package:celiapp/screens/map_screen.dart';
-import 'package:celiapp/screens/user_profile_screen.dart';
+import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
+import 'screens/home_screen.dart'; // Manteniendo tus rutas actuales
+import 'screens/login_screen.dart';
+import 'screens/map_screen.dart';
+import 'screens/register_screen.dart';
+import 'screens/settings_screen.dart'; // Pantalla de configuración
+import 'screens/user_profile_screen.dart';
+import 'screens/user_settings_screen.dart'; // Configuración del usuario
+import 'firebase_options.dart'; // Asegúrate de tener bien configurado Firebase
+import 'package:celiapp/widgets/apps_colors.dart'; // Importa tu clase de colores
+import 'screens/theme_notifier.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const MyApp());
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'CeliApp',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
+    return ChangeNotifierProvider(
+      create: (_) => ThemeNotifier(), // Este es el proveedor de tema
+      child: Consumer<ThemeNotifier>(
+        builder: (context, themeModel, child) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            themeMode: themeModel.themeMode,
+            theme: ThemeData(
+              colorScheme: ColorScheme.light(
+                primary: AppColors.lightPrimary100,
+                secondary: AppColors.lightAccent100,
+                background: AppColors.lightBg100,
+              ),
+              scaffoldBackgroundColor: AppColors.lightBg100,
+              textTheme: TextTheme(
+                titleLarge: TextStyle(color: AppColors.lightText100),
+                bodyMedium: TextStyle(color: AppColors.lightText200),
+              ),
+            ),
+            darkTheme: ThemeData(
+              colorScheme: ColorScheme.dark(
+                primary: AppColors.darkPrimary100,
+                secondary: AppColors.darkAccent100,
+                background: AppColors.darkBg100,
+              ),
+              scaffoldBackgroundColor: AppColors.darkBg100,
+              textTheme: TextTheme(
+                titleLarge: TextStyle(color: AppColors.darkText100),
+                bodyMedium: TextStyle(color: AppColors.darkText200),
+              ),
+            ),
+            initialRoute: '/home',
+            routes: {
+              '/home': (context) => HomeScreen(),
+              '/login': (context) => LoginScreen(),
+              '/register': (context) => RegisterScreen(),
+              '/map': (context) => MapScreen(),
+              '/settings': (context) =>
+                  SettingsScreen(), // Pantalla de configuración
+              '/profile': (context) => UserProfileScreen(),
+              '/user_settings': (context) => UserSettingsScreen(),
+            },
+          );
+        },
       ),
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const LoadingScreen(),
-        '/home': (context) =>  HomeScreen(),
-        '/login': (context) => const LoginScreen(),
-        '/register': (context) => const RegisterScreen(),
-        '/user_settings': (context) => const UserSettingsScreen(), //
-        '/recommended_products': (context) => const RecommendedProductsScreen(),
-        '/map': (context) => const MapScreen(),
-          '/user_profile': (context) => UserProfileScreen(),
-      },
     );
   }
 }
