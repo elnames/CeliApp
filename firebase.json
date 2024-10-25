@@ -1,1 +1,41 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"celiapp-c2239","appId":"1:360503101068:android:ef0b12072372ba0fc59da9","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"celiapp-c2239","configurations":{"android":"1:360503101068:android:ef0b12072372ba0fc59da9","ios":"1:360503101068:ios:16e00e254a2d71acc59da9","macos":"1:360503101068:ios:16e00e254a2d71acc59da9","web":"1:360503101068:web:1d179772b0f3c2f0c59da9","windows":"1:360503101068:web:27900ad803417af9c59da9"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "celiapp-c2239",
+          "appId": "1:360503101068:android:ef0b12072372ba0fc59da9",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "celiapp-c2239",
+          "configurations": {
+            "android": "1:360503101068:android:ef0b12072372ba0fc59da9",
+            "ios": "1:360503101068:ios:16e00e254a2d71acc59da9",
+            "macos": "1:360503101068:ios:16e00e254a2d71acc59da9",
+            "web": "1:360503101068:web:1d179772b0f3c2f0c59da9",
+            "windows": "1:360503101068:web:27900ad803417af9c59da9"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint"
+      ]
+    }
+  ]
+}

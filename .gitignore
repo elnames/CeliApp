@@ -58,3 +58,8 @@ pubspec.lock
 
 # Others
 .env
+
+/functions
+/node_modules
+/package-lock.json
+functions/firebase_credentials.json

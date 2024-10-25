@@ -3,11 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 class LoadingScreen extends StatefulWidget {
+  const LoadingScreen({super.key});
+
   @override
   _LoadingScreenState createState() => _LoadingScreenState();
 }
 
-class _LoadingScreenState extends State<LoadingScreen> with SingleTickerProviderStateMixin {
+class _LoadingScreenState extends State<LoadingScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
@@ -48,7 +51,8 @@ class _LoadingScreenState extends State<LoadingScreen> with SingleTickerProvider
       print('LoadingScreen: User is logged in, navigating to HomeScreen');
       Navigator.pushReplacementNamed(context, '/home');
     } else {
-      print('LoadingScreen: No user logged in, navigating to HomeScreen with limited access');
+      print(
+          'LoadingScreen: No user logged in, navigating to HomeScreen with limited access');
       Navigator.pushReplacementNamed(context, '/home');
     }
   }
@@ -60,9 +64,9 @@ class _LoadingScreenState extends State<LoadingScreen> with SingleTickerProvider
         child: FadeTransition(
           opacity: _animation,
           child: Image.asset(
-            'assets/logo.png', // Ruta de tu logo
-            width: 150,
-            height: 150,
+            'assets/images/logo.png', // Ruta de tu rlogo
+            width: 300,
+            height: 300,
           ),
         ),
       ),
