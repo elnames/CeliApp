@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; // Necesario para Firestore
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import '../widgets/apps_colors.dart'; // Asegúrate de que esta ruta esté correcta
-import 'admin_screen.dart'; // Pantalla de admin para gestión de CRUDs
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import '../widgets/apps_colors.dart';
+import 'admin_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -11,41 +13,95 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  User? user; // Variable para almacenar el usuario autenticado, si existe
-  GoogleMapController? _mapController; // Controlador del mapa de Google Maps
-  bool isAdmin = false; // Variable para determinar si el usuario es admin
+  User? user;
+  GoogleMapController? _mapController;
+  bool isAdmin = false;
+
+  List<dynamic> _products = [];
+  List<dynamic> _stores = [];
+  bool _isLoadingProducts = true;
+  bool _isLoadingStores = true;
 
   @override
   void initState() {
     super.initState();
-    // Al iniciar el widget, obtenemos el usuario autenticado desde Firebase
     user = FirebaseAuth.instance.currentUser;
-
-    // Verificamos si el usuario tiene el rol de administrador
     _checkIfAdmin();
+    _fetchProducts();
+    _fetchStores();
   }
 
-  // Función para verificar si el usuario es admin
   Future<void> _checkIfAdmin() async {
     if (user != null) {
-      // Obtenemos el documento del usuario desde Firestore
-      DocumentSnapshot userDoc = await FirebaseFirestore.instance
+      DocumentSnapshot<Map<String, dynamic>> userDoc = await FirebaseFirestore.instance
           .collection('users')
           .doc(user!.uid)
           .get();
 
       if (userDoc.exists) {
         setState(() {
-          // Asignamos 'isAdmin' basado en el campo 'role' en Firestore
-          isAdmin = userDoc['role'] == 'admin';
+          isAdmin = userDoc.data()?['role'] == 'admin';
         });
       }
     }
   }
 
+  Future<void> _fetchProducts() async {
+    try {
+      final response = await http.get(Uri.parse('http://10.0.2.2:3000/api/productos'));
+
+      if (response.statusCode == 200) {
+        setState(() {
+          _products = json.decode(response.body).take(10).toList();
+          _isLoadingProducts = false;
+        });
+      } else {
+        setState(() {
+          _isLoadingProducts = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al cargar los productos: ${response.reasonPhrase}')),
+        );
+      }
+    } catch (e) {
+      setState(() {
+        _isLoadingProducts = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al cargar los productos: $e')),
+      );
+    }
+  }
+
+  Future<void> _fetchStores() async {
+    try {
+      final response = await http.get(Uri.parse('http://10.0.2.2:3000/api/tiendas'));
+
+      if (response.statusCode == 200) {
+        setState(() {
+          _stores = json.decode(response.body).take(10).toList();
+          _isLoadingStores = false;
+        });
+      } else {
+        setState(() {
+          _isLoadingStores = false;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error al cargar las tiendas: ${response.reasonPhrase}')),
+        );
+      }
+    } catch (e) {
+      setState(() {
+        _isLoadingStores = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error al cargar las tiendas: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Verificar si el tema es oscuro o claro
     bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
@@ -61,17 +117,17 @@ class _HomeScreenState extends State<HomeScreen> {
               SizedBox(height: 10),
               _buildSearchBar(isDarkMode),
               SizedBox(height: 20),
-              _buildSectionTitle('Comida recomendada', isDarkMode),
+              _buildSectionTitle('Comida recomendada', isDarkMode, '/product_catalog'),
               SizedBox(height: 10),
               _buildRecommendedProducts(isDarkMode),
               SizedBox(height: 20),
-              _buildSectionTitle('Tiendas recomendadas', isDarkMode),
+              _buildSectionTitle('Tiendas recomendadas', isDarkMode, '/store_catalog'),
               SizedBox(height: 10),
               _buildRecommendedStores(isDarkMode),
               SizedBox(height: 20),
-              _buildSectionTitle('Locales cercanos', isDarkMode),
+              _buildSectionTitle('Locales cercanos', isDarkMode, null),
               SizedBox(height: 10),
-              _buildMapSection(isDarkMode), // Actualizado para el mapa
+              _buildMapSection(isDarkMode),
             ],
           ),
         ),
@@ -86,8 +142,7 @@ class _HomeScreenState extends State<HomeScreen> {
         'CeliApp',
         style: TextStyle(color: AppColors.text100),
       ),
-      backgroundColor:
-          isDarkMode ? AppColors.darkPrimary100 : AppColors.lightPrimary100,
+      backgroundColor: isDarkMode ? AppColors.darkPrimary100 : AppColors.lightPrimary100,
       iconTheme: IconThemeData(color: AppColors.text100),
       leading: Builder(
         builder: (context) => IconButton(
@@ -117,9 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           DrawerHeader(
             decoration: BoxDecoration(
-              color: isDarkMode
-                  ? AppColors.darkPrimary100
-                  : AppColors.lightPrimary100,
+              color: isDarkMode ? AppColors.darkPrimary100 : AppColors.lightPrimary100,
             ),
             child: Text(
               'CeliApp Menu',
@@ -149,18 +202,15 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _showMenu(BuildContext context) {
     final RenderBox button = context.findRenderObject() as RenderBox;
-    final RenderBox overlay =
-        Overlay.of(context).context.findRenderObject() as RenderBox;
+    final RenderBox overlay = Overlay.of(context).context.findRenderObject() as RenderBox;
     final RelativeRect position = RelativeRect.fromRect(
       Rect.fromPoints(
         button.localToGlobal(Offset(0, button.size.height), ancestor: overlay),
-        button.localToGlobal(button.size.bottomRight(Offset.zero),
-            ancestor: overlay),
+        button.localToGlobal(button.size.bottomRight(Offset.zero), ancestor: overlay),
       ),
       Offset.zero & overlay.size,
     );
 
-     // Mostrar el menú, incluyendo la opción "Admin" solo si el usuario es admin
     showMenu(
       context: context,
       position: position,
@@ -185,7 +235,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   value: 'admin',
                   child: ListTile(
                     leading: Icon(Icons.admin_panel_settings),
-                    title: Text('Admin'), // Opción solo para administradores
+                    title: Text('Admin'),
                   ),
                 ),
               PopupMenuItem(
@@ -226,7 +276,6 @@ class _HomeScreenState extends State<HomeScreen> {
       } else if (value == 'register') {
         Navigator.pushNamed(context, '/register');
       } else if (value == 'admin') {
-        // Navegar a la pantalla Admin si el usuario es admin
         Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => AdminScreen()),
@@ -251,8 +300,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildSearchBar(bool isDarkMode) {
     return TextField(
       decoration: InputDecoration(
-        prefixIcon: Icon(Icons.search,
-            color: isDarkMode ? Colors.white70 : Colors.black54),
+        prefixIcon: Icon(Icons.search, color: isDarkMode ? Colors.white70 : Colors.black54),
         hintText: 'Busca tu local o comida favorita',
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(30),
@@ -263,138 +311,147 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildSectionTitle(String title, bool isDarkMode) {
-    return Text(
-      title,
-      style: TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.w600,
-        color: isDarkMode ? Colors.white70 : Colors.black87,
+  Widget _buildSectionTitle(String title, bool isDarkMode, String? route) {
+    return GestureDetector(
+      onTap: () {
+        if (route != null) Navigator.pushNamed(context, route);
+      },
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: isDarkMode ? Colors.white70 : Colors.black87,
+              decoration: route != null ? TextDecoration.underline : null,
+            ),
+          ),
+          if (route != null)
+            IconButton(
+              icon: Icon(Icons.arrow_forward, color: isDarkMode ? Colors.white70 : Colors.black87),
+              onPressed: () {
+                Navigator.pushNamed(context, route);
+              },
+            ),
+        ],
       ),
     );
   }
 
   Widget _buildRecommendedProducts(bool isDarkMode) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        _buildProductCard(
-            'Pan sin gluten', 'assets/images/pan.png', isDarkMode),
-        _buildProductCard(
-            'Pastas sin gluten', 'assets/images/pastas.png', isDarkMode),
-      ],
-    );
+    return _isLoadingProducts
+        ? Center(child: CircularProgressIndicator())
+        : _products.isEmpty
+            ? Center(child: Text("No hay productos disponibles"))
+            : SizedBox(
+                height: 200,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _products.length,
+                  itemBuilder: (context, index) {
+                    var product = _products[index];
+                    return _buildProductCard(product, isDarkMode);
+                  },
+                ),
+              );
   }
 
-  Widget _buildProductCard(String title, String imagePath, bool isDarkMode) {
-    return GestureDetector(
-      onTap: () {
-        if (user != null) {
-          Navigator.pushNamed(context, '/product_details', arguments: title);
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content:
-                  Text('Inicia sesión para ver más detalles del producto.'),
+  Widget _buildProductCard(dynamic product, bool isDarkMode) {
+    return Container(
+      width: 150,
+      margin: EdgeInsets.symmetric(horizontal: 8.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15),
+        color: Color(0xFFF4CE92),  // Color claro que mencionaste anteriormente
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 2,
+            blurRadius: 5,
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(15),
+            child: Image.network(
+              product['url_imagen'] ?? 'https://via.placeholder.com/150',
+              height: 100,
+              fit: BoxFit.cover,
             ),
-          );
-        }
-      },
-      child: Container(
-        width: 150,
-        height: 200,
-        decoration: BoxDecoration(
-          color: isDarkMode
-              ? AppColors.darkBg300
-              : AppColors.lightBg300, // Ajuste de colores
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 10,
-              offset: Offset(0, 5),
+          ),
+          SizedBox(height: 5),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              product['nombre'],
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black),
             ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Image.asset(imagePath, height: 100),
-            ),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: isDarkMode ? Colors.white70 : Colors.black87,
-              ),
-            ),
-            Icon(Icons.location_on, color: Colors.green),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildRecommendedStores(bool isDarkMode) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        _buildStoreCard('Tienda 1', 'assets/images/jumbo.png', isDarkMode),
-        _buildStoreCard('Tienda 2', 'assets/images/adios.png', isDarkMode),
-      ],
-    );
+    return _isLoadingStores
+        ? Center(child: CircularProgressIndicator())
+        : _stores.isEmpty
+            ? Center(child: Text("No hay tiendas disponibles"))
+            : SizedBox(
+                height: 200,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: _stores.length,
+                  itemBuilder: (context, index) {
+                    var store = _stores[index];
+                    return _buildStoreCard(store, isDarkMode);
+                  },
+                ),
+              );
   }
 
-  Widget _buildStoreCard(String title, String imagePath, bool isDarkMode) {
-    return GestureDetector(
-      onTap: () {
-        if (user != null) {
-          Navigator.pushNamed(context, '/store_details', arguments: title);
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-                content:
-                    Text('Inicia sesión para ver más detalles de la tienda.')),
-          );
-        }
-      },
-      child: Container(
-        width: 150,
-        height: 200,
-        decoration: BoxDecoration(
-          color: isDarkMode
-              ? AppColors.darkBg300
-              : AppColors.lightBg300, // Ajuste de colores
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black12,
-              blurRadius: 10,
-              offset: Offset(0, 5),
+  Widget _buildStoreCard(dynamic store, bool isDarkMode) {
+    return Container(
+      width: 150,
+      margin: EdgeInsets.symmetric(horizontal: 8.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15),
+        color: Color(0xFFF4CE92), // Color claro que mencionaste anteriormente
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 2,
+            blurRadius: 5,
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(15),
+            child: Image.network(
+              store['image'] ?? 'https://via.placeholder.com/150',
+              height: 100,
+              fit: BoxFit.cover,
             ),
-          ],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Image.asset(imagePath, height: 100),
+          ),
+          SizedBox(height: 5),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              store['nombre'],
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(fontWeight: FontWeight.bold, color: isDarkMode ? Colors.white : Colors.black),
             ),
-            Text(
-              title,
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: isDarkMode ? Colors.white70 : Colors.black87,
-              ),
-            ),
-            Icon(Icons.store, color: Colors.blueAccent),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -403,10 +460,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return GestureDetector(
       onTap: () {
         if (user != null) {
-          // Si el usuario está autenticado, navegar a la pantalla del mapa
           Navigator.pushNamed(context, '/map');
         } else {
-          // Si el usuario no está autenticado, mostrar un SnackBar
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Inicia sesión para acceder al mapa completo.'),
@@ -428,7 +483,7 @@ class _HomeScreenState extends State<HomeScreen> {
           myLocationEnabled: true,
           myLocationButtonEnabled: true,
           mapType: MapType.normal,
-          scrollGesturesEnabled: true,  // Siempre permitir gestos en el mapa
+          scrollGesturesEnabled: true,
           zoomGesturesEnabled: true,
           rotateGesturesEnabled: true,
           tiltGesturesEnabled: true,

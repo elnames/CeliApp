@@ -11,10 +11,12 @@ import 'screens/user_settings_screen.dart';
 import 'screens/product_list_screen.dart';
 import 'screens/product_form_screen.dart';
 import 'screens/product_edit_screen.dart';
-import 'screens/admin_screen.dart'; // Pantalla de administración (CRUD)
-import 'screens/tienda_list_screen.dart'; // Pantalla de lista de tiendas
-import 'screens/tienda_form_screen.dart'; // Pantalla de formulario de tiendas
-import 'screens/tienda_edit_screen.dart'; // Pantalla de edición de tiendas
+import 'screens/admin_screen.dart';
+import 'screens/tienda_list_screen.dart';
+import 'screens/tienda_form_screen.dart';
+import 'screens/tienda_edit_screen.dart';
+import 'screens/product_catalog_screen.dart'; // Nueva pantalla de catálogo de productos
+import 'screens/store_catalog_screen.dart'; // Nueva pantalla de catálogo de tiendas
 import 'firebase_options.dart';
 import 'package:celiapp/widgets/apps_colors.dart';
 import 'screens/theme_notifier.dart';
@@ -78,11 +80,13 @@ class MyApp extends StatelessWidget {
               },
               '/admin': (context) => AdminScreen(),
               '/tienda_list': (context) => TiendaListScreen(),
-              '/tienda_form': (context) => TiendaFormScreen(), // Nueva pantalla de formulario de tiendas
+              '/tienda_form': (context) => TiendaFormScreen(),
               '/tienda_edit': (context) {
                 final tienda = ModalRoute.of(context)!.settings.arguments as dynamic;
-                return TiendaEditScreen(tienda: tienda); // Nueva pantalla de edición de tiendas
+                return TiendaEditScreen(tienda: tienda);
               },
+              '/product_catalog': (context) => ProductCatalogScreen(), // Ruta para el catálogo de productos
+              '/store_catalog': (context) => StoreCatalogScreen(),     // Ruta para el catálogo de tiendas
             },
           );
         },
