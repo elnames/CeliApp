@@ -5,34 +5,42 @@ const config = require('../config/db.config');
 async function getTiendas(req, res) {
   try {
     let pool = await sql.connect(config);
-    let result = await pool.request().query("SELECT * FROM Tiendas");
-    res.json(result.recordset);
+    let result = await pool.request().query("SELECT * FROM dbo.Tiendas");
+    if (result.recordset.length > 0) {
+      res.json(result.recordset);
+    } else {
+      res.status(404).send("No se encontraron tiendas.");
+    }
   } catch (err) {
     console.error("Error en getTiendas: ", err);
-    res.status(500).send("Error al obtener las tiendas");
+    res.status(500).send("Error al obtener las tiendas.");
   }
 }
 
 // Agregar una nueva tienda
 const addTienda = async (req, res) => {
   try {
-    const { nombre, direccion, longitud, latitud } = req.body;
-    const pool = await sql.connect(config);
+    const { nombre, direccion, comuna, region } = req.body;
 
+    if (!nombre || !direccion || !comuna || !region) {
+      return res.status(400).send("Todos los campos son obligatorios.");
+    }
+
+    const pool = await sql.connect(config);
     await pool.request()
-      .input('Nombre', sql.NVarChar, nombre)
-      .input('Direccion', sql.NVarChar, direccion)
-      .input('Longitud', sql.Float, longitud)
-      .input('Latitud', sql.Float, latitud)
+      .input('nombre', sql.NVarChar, nombre)
+      .input('direccion', sql.NVarChar, direccion)
+      .input('comuna', sql.NVarChar, comuna)
+      .input('region', sql.NVarChar, region)
       .query(`
-        INSERT INTO Tiendas (nombre, direccion, longitud, latitud)
-        VALUES (@Nombre, @Direccion, @Longitud, @Latitud)
+        INSERT INTO dbo.Tiendas (nombre, direccion, comuna, region)
+        VALUES (@nombre, @direccion, @comuna, @region)
       `);
 
     res.status(201).send("Tienda agregada exitosamente.");
   } catch (error) {
     console.error("Error en addTienda:", error);
-    res.status(500).send("Error al agregar tienda");
+    res.status(500).send("Error al agregar tienda.");
   }
 };
 
@@ -40,21 +48,25 @@ const addTienda = async (req, res) => {
 const updateTienda = async (req, res) => {
   try {
     const { id_tienda } = req.params;
-    const { nombre, direccion, longitud, latitud } = req.body;
+    const { nombre, direccion, comuna, region } = req.body;
 
-    let pool = await sql.connect(config);
+    if (!id_tienda || isNaN(id_tienda)) {
+      return res.status(400).send("El ID de la tienda debe ser un número válido.");
+    }
+
+    const pool = await sql.connect(config);
     let result = await pool.request()
       .input('id_tienda', sql.BigInt, id_tienda)
       .input('nombre', sql.NVarChar, nombre)
       .input('direccion', sql.NVarChar, direccion)
-      .input('longitud', sql.Float, longitud)
-      .input('latitud', sql.Float, latitud)
+      .input('comuna', sql.NVarChar, comuna)
+      .input('region', sql.NVarChar, region)
       .query(`
         UPDATE Tiendas
         SET nombre = @nombre,
             direccion = @direccion,
-            longitud = @longitud,
-            latitud = @latitud
+            comuna = @comuna,
+            region = @region
         WHERE id_tienda = @id_tienda
       `);
 
@@ -65,16 +77,20 @@ const updateTienda = async (req, res) => {
     }
   } catch (err) {
     console.error("Error en updateTienda: ", err);
-    res.status(500).send("Error al actualizar tienda");
+    res.status(500).send("Error al actualizar tienda.");
   }
 };
 
-// Eliminar una tienda
+// Eliminar una tienda por su ID
 const deleteTienda = async (req, res) => {
   try {
     const { id_tienda } = req.params;
 
-    let pool = await sql.connect(config);
+    if (!id_tienda || isNaN(id_tienda)) {
+      return res.status(400).send("El ID de la tienda debe ser un número válido.");
+    }
+
+    const pool = await sql.connect(config);
     let result = await pool.request()
       .input('id_tienda', sql.BigInt, id_tienda)
       .query('DELETE FROM Tiendas WHERE id_tienda = @id_tienda');
@@ -86,13 +102,37 @@ const deleteTienda = async (req, res) => {
     }
   } catch (err) {
     console.error("Error en deleteTienda: ", err);
-    res.status(500).send("Error al eliminar tienda");
+    res.status(500).send("Error al eliminar tienda.");
   }
 };
+
+// Obtener regiones únicas
+async function getRegiones(req, res) {
+  try {
+    let pool = await sql.connect(config);
+    const result = await pool.request()
+      .query(`
+        SELECT DISTINCT region 
+        FROM Tiendas 
+        WHERE region IS NOT NULL 
+          AND region != '' 
+          AND region != 'null'
+        ORDER BY region
+      `);
+    
+    const regiones = result.recordset.map(row => row.region);
+    console.log('Regiones encontradas:', regiones);
+    res.json(regiones);
+  } catch (error) {
+    console.error('Error al obtener regiones:', error);
+    res.status(500).json({ error: 'Error al obtener las regiones' });
+  }
+}
 
 module.exports = {
   getTiendas,
   addTienda,
   updateTienda,
   deleteTienda,
+  getRegiones
 };

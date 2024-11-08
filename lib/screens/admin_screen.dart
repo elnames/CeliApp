@@ -1,56 +1,89 @@
 import 'package:flutter/material.dart';
-import '../widgets/apps_colors.dart';
-import 'product_list_screen.dart';
-import 'tienda_list_screen.dart';
+import '../constants/app_colors.dart';
+import 'product_management_screen.dart';
+import 'store_management_screen.dart';
+import 'user_management_screen.dart';
 
 class AdminScreen extends StatelessWidget {
   const AdminScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // Verificar si el tema es oscuro o claro
-    bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
-
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
     return Scaffold(
+      backgroundColor: isDark ? AppColors.darkBg100 : AppColors.lightBg100,
       appBar: AppBar(
+        backgroundColor: isDark ? AppColors.darkBg200 : AppColors.lightBg200,
+        elevation: 0,
         title: Text(
           'Panel de Administración',
-          style: TextStyle(color: AppColors.text100),
+          style: TextStyle(
+            color: isDark ? AppColors.darkText100 : AppColors.lightText100,
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
+          ),
         ),
-        backgroundColor:
-            isDarkMode ? AppColors.darkPrimary100 : AppColors.lightPrimary100,
-        iconTheme: IconThemeData(color: AppColors.text100),
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back, color: isDark ? AppColors.darkText100 : AppColors.lightText100),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: GridView.count(
-          crossAxisCount: 2, // Número de columnas
-          crossAxisSpacing: 16, // Espacio horizontal entre tarjetas
-          mainAxisSpacing: 16, // Espacio vertical entre tarjetas
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildAdminOptionCard(
-              context,
-              icon: Icons.shopping_bag,
-              text: 'Gestionar Productos',
-              color: isDarkMode ? AppColors.darkPrimary100 : AppColors.lightPrimary100,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => ProductListScreen()),
-                );
-              },
+            Text(
+              'Gestión General',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: isDark ? AppColors.darkText100 : AppColors.lightText100,
+              ),
             ),
-            _buildAdminOptionCard(
-              context,
-              icon: Icons.store,
-              text: 'Gestionar Tiendas',
-              color: isDarkMode ? AppColors.darkPrimary100 : AppColors.lightPrimary100,
-              onTap: () {
-                Navigator.push(
+            SizedBox(height: 16),
+            GridView.count(
+              shrinkWrap: true,
+              crossAxisCount: 2,
+              mainAxisSpacing: 16,
+              crossAxisSpacing: 16,
+              children: [
+                _buildAdminCard(
                   context,
-                  MaterialPageRoute(builder: (context) => TiendaListScreen()),
-                );
-              },
+                  'Productos',
+                  Icons.inventory,
+                  Colors.blue[400]!,
+                  'Gestionar catálogo de productos',
+                  () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ProductManagementScreen()),
+                  ),
+                ),
+                _buildAdminCard(
+                  context,
+                  'Tiendas',
+                  Icons.store,
+                  Colors.orange[400]!,
+                  'Administrar tiendas',
+                  () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => StoreManagementScreen()),
+                  ),
+                ),
+                _buildAdminCard(
+                  context,
+                  'Usuarios',
+                  Icons.people,
+                  Colors.purple[400]!,
+                  'Gestionar usuarios',
+                  () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => UserManagementScreen()),
+                  ),
+                ),
+                // Puedes agregar más cards aquí según necesites
+              ],
             ),
           ],
         ),
@@ -58,34 +91,62 @@ class AdminScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildAdminOptionCard(BuildContext context,
-      {required IconData icon,
-      required String text,
-      required Color color,
-      required VoidCallback onTap}) {
-    return GestureDetector(
+  Widget _buildAdminCard(
+    BuildContext context,
+    String title,
+    IconData icon,
+    Color color,
+    String description,
+    VoidCallback onTap,
+  ) {
+    return InkWell(
       onTap: onTap,
-      child: Card(
-        color: color,
-        shape: RoundedRectangleBorder(
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
           borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: color.withOpacity(0.1),
+              blurRadius: 10,
+              offset: Offset(0, 5),
+            ),
+          ],
         ),
-        elevation: 5,
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              icon,
-              size: 60,
-              color: AppColors.text100,
+            Container(
+              padding: EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: color.withOpacity(0.1),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                icon,
+                size: 32,
+                color: color,
+              ),
             ),
-            SizedBox(height: 10),
+            SizedBox(height: 12),
             Text(
-              text,
+              title,
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
-                color: AppColors.text100,
+                color: Colors.black87,
+              ),
+            ),
+            SizedBox(height: 4),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: Text(
+                description,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey[600],
+                ),
               ),
             ),
           ],

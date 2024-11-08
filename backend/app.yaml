@@ -1,0 +1,16 @@
+runtime: nodejs14
+
+env_variables:
+  DB_USER: "celiadmin"
+  DB_PASSWORD: "celiadmin"
+  DB_SERVER: "34.176.146.237"
+  DB_NAME: "CeliApp"
+  DB_PORT: "1433"
+  NODE_ENV: "production"
+
+instance_class: F1
+
+automatic_scaling:
+  target_cpu_utilization: 0.65
+  min_instances: 1
+  max_instances: 10 

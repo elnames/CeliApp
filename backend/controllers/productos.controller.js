@@ -5,7 +5,13 @@ const config = require('../config/db.config');
 async function getProductos(req, res) {
   try {
     let pool = await sql.connect(config);
-    let result = await pool.request().query("SELECT * FROM Productos");
+    let result = await pool.request().query(`
+      SELECT id_producto, categoria, nombre, descripcion, 
+             empresa_tienda, prod_celiaco, codigo_barras, 
+             url_imagen, creado 
+      FROM dbo.Productos 
+      ORDER BY id_producto
+    `);
     if (result.recordset.length > 0) {
       res.json(result.recordset);
     } else {
@@ -35,7 +41,7 @@ const addProducto = async (req, res) => {
       .input('Prod_celiaco', sql.Bit, prod_celiaco || 0)
       .input('Codigo_barras', sql.NVarChar, codigo_barras)
       .query(`
-        INSERT INTO Productos (nombre, descripcion, empresa_tienda, prod_celiaco, codigo_barras)
+        INSERT INTO dbo.Productos (nombre, descripcion, empresa_tienda, prod_celiaco, codigo_barras)
         VALUES (@Nombre, @Descripcion, @Empresa_tienda, @Prod_celiaco, @Codigo_barras)
       `);
 
@@ -65,7 +71,7 @@ const updateProducto = async (req, res) => {
       .input('codigo_barras', sql.NVarChar, codigo_barras)
       .input('prod_celiaco', sql.Bit, prod_celiaco)
       .query(`
-        UPDATE Productos
+        UPDATE dbo.Productos
         SET nombre = @nombre,
             descripcion = @descripcion,
             empresa_tienda = @empresa_tienda,
@@ -97,7 +103,7 @@ const deleteProducto = async (req, res) => {
     const pool = await sql.connect(config);
     let result = await pool.request()
       .input('id_producto', sql.BigInt, id_producto)
-      .query('DELETE FROM Productos WHERE id_producto = @id_producto');
+      .query('DELETE FROM dbo.Productos WHERE id_producto = @id_producto');
 
     if (result.rowsAffected[0] > 0) {
       res.status(200).send("Producto eliminado exitosamente.");
@@ -110,9 +116,33 @@ const deleteProducto = async (req, res) => {
   }
 };
 
+// Función para obtener categorías únicas
+async function getCategorias(req, res) {
+  try {
+    let pool = await sql.connect(config);
+    const result = await pool.request()
+      .query(`
+        SELECT DISTINCT categoria 
+        FROM dbo.Productos 
+        WHERE categoria IS NOT NULL 
+          AND categoria != '' 
+          AND categoria != 'null'
+        ORDER BY categoria
+      `);
+    
+    const categorias = result.recordset.map(row => row.categoria);
+    console.log('Categorías encontradas:', categorias);
+    res.json(categorias);
+  } catch (error) {
+    console.error('Error al obtener categorías:', error);
+    res.status(500).json({ error: 'Error al obtener las categorías' });
+  }
+}
+
 module.exports = {
   getProductos,
   addProducto,
   updateProducto,
   deleteProducto,
+  getCategorias
 };

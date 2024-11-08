@@ -1,14 +1,15 @@
 const sql = require('mssql');
 
 const config = {
-  user: 'celiadmin', // Debe ser un usuario válido en la instancia de SQL Server en GCP.
-  password: 'celiadmin', // Contraseña para ese usuario.
-  server: '34.176.146.237', // Dirección IP pública de tu instancia.
-  database: 'CeliApp', // Nombre de tu base de datos.
-  port: 1433, // El puerto predeterminado de SQL Server.
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  server: process.env.DB_SERVER,
+  database: process.env.DB_NAME,
+  port: parseInt(process.env.DB_PORT),
   options: {
-    encrypt: true, // GCP requiere conexiones cifradas.
-    trustServerCertificate: true // Solo para desarrollo. En producción, usa un certificado válido.
+    encrypt: true,
+    trustServerCertificate: true,
+    enableArithAbort: true
   }
 };
 

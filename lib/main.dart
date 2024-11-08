@@ -2,95 +2,69 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'screens/home_screen.dart';
-import 'screens/login_screen.dart';
-import 'screens/map_screen.dart';
-import 'screens/register_screen.dart';
-import 'screens/settings_screen.dart';
 import 'screens/user_profile_screen.dart';
-import 'screens/user_settings_screen.dart';
-import 'screens/product_list_screen.dart';
-import 'screens/product_form_screen.dart';
-import 'screens/product_edit_screen.dart';
 import 'screens/admin_screen.dart';
-import 'screens/tienda_list_screen.dart';
-import 'screens/tienda_form_screen.dart';
-import 'screens/tienda_edit_screen.dart';
-import 'screens/product_catalog_screen.dart'; // Nueva pantalla de catálogo de productos
-import 'screens/store_catalog_screen.dart'; // Nueva pantalla de catálogo de tiendas
-import 'firebase_options.dart';
-import 'package:celiapp/widgets/apps_colors.dart';
-import 'screens/theme_notifier.dart';
+import 'screens/product_management_screen.dart';
+import 'screens/store_management_screen.dart';
+import 'screens/catalog_screen.dart';
+import 'screens/product_detail_screen.dart';
+import 'screens/map_screen.dart';
+import 'constants/app_colors.dart';
+import 'theme/theme_notifier.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
+  await Firebase.initializeApp();
+  
+  runApp(
+    ChangeNotifierProvider(
+      create: (_) => ThemeNotifier(),
+      child: MyApp(),
+    ),
   );
-  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => ThemeNotifier(),
-      child: Consumer<ThemeNotifier>(
-        builder: (context, themeModel, child) {
-          return MaterialApp(
-            debugShowCheckedModeBanner: false,
-            themeMode: themeModel.themeMode,
-            theme: ThemeData(
-              colorScheme: ColorScheme.light(
-                primary: AppColors.lightPrimary100,
-                secondary: AppColors.lightAccent100,
-                background: AppColors.lightBg100,
-              ),
-              scaffoldBackgroundColor: AppColors.lightBg100,
-              textTheme: TextTheme(
-                titleLarge: TextStyle(color: AppColors.lightText100),
-                bodyMedium: TextStyle(color: AppColors.lightText200),
-              ),
+    return Consumer<ThemeNotifier>(
+      builder: (context, themeNotifier, _) {
+        return MaterialApp(
+          title: 'CeliApp',
+          theme: ThemeData(
+            primaryColor: AppColors.primary,
+            scaffoldBackgroundColor: AppColors.lightBg100,
+            colorScheme: ColorScheme.light(
+              primary: AppColors.primary,
+              secondary: AppColors.secondary,
             ),
-            darkTheme: ThemeData(
-              colorScheme: ColorScheme.dark(
-                primary: AppColors.darkPrimary100,
-                secondary: AppColors.darkAccent100,
-                background: AppColors.darkBg100,
-              ),
-              scaffoldBackgroundColor: AppColors.darkBg100,
-              textTheme: TextTheme(
-                titleLarge: TextStyle(color: AppColors.darkText100),
-                bodyMedium: TextStyle(color: AppColors.darkText200),
-              ),
+          ),
+          darkTheme: ThemeData(
+            primaryColor: AppColors.darkPrimary,
+            scaffoldBackgroundColor: AppColors.darkBg100,
+            colorScheme: ColorScheme.dark(
+              primary: AppColors.darkPrimary,
+              secondary: AppColors.darkAccent,
             ),
-            initialRoute: '/home',
-            routes: {
-              '/home': (context) => HomeScreen(),
-              '/login': (context) => LoginScreen(),
-              '/register': (context) => RegisterScreen(),
-              '/map': (context) => MapScreen(),
-              '/settings': (context) => SettingsScreen(),
-              '/profile': (context) => UserProfileScreen(),
-              '/user_settings': (context) => UserSettingsScreen(),
-              '/product_list': (context) => ProductListScreen(),
-              '/product_form': (context) => ProductFormScreen(),
-              '/product_edit': (context) {
-                final product = ModalRoute.of(context)!.settings.arguments as dynamic;
-                return ProductEditScreen(product: product);
-              },
-              '/admin': (context) => AdminScreen(),
-              '/tienda_list': (context) => TiendaListScreen(),
-              '/tienda_form': (context) => TiendaFormScreen(),
-              '/tienda_edit': (context) {
-                final tienda = ModalRoute.of(context)!.settings.arguments as dynamic;
-                return TiendaEditScreen(tienda: tienda);
-              },
-              '/product_catalog': (context) => ProductCatalogScreen(), // Ruta para el catálogo de productos
-              '/store_catalog': (context) => StoreCatalogScreen(),     // Ruta para el catálogo de tiendas
+          ),
+          themeMode: themeNotifier.themeMode,
+          debugShowCheckedModeBanner: false,
+          initialRoute: '/home',
+          routes: {
+            '/home': (context) => HomeScreen(),
+            '/profile': (context) => UserProfileScreen(),
+            '/admin': (context) => AdminScreen(),
+            '/product_management': (context) => ProductManagementScreen(),
+            '/tienda_management': (context) => StoreManagementScreen(),
+            '/product_detail': (context) {
+              final product = ModalRoute.of(context)!.settings.arguments as dynamic;
+              return ProductDetailScreen(product: product);
             },
-          );
-        },
-      ),
+            '/catalog': (context) => CatalogScreen(),
+            '/map': (context) => MapScreen(stores: []),
+          },
+        );
+      },
     );
   }
 }
