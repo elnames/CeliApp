@@ -6,14 +6,16 @@
 - **Flutter**: Framework de desarrollo móvil para Android e iOS.
 - **Firebase**: Servicios para autenticación y almacenamiento de información del usuario.
 - **Google Cloud Platform (GCP)**: Para integración de servicios adicionales y almacenamiento de datos.
-- **Firebase Firestore**: Para almacenar información sobre alimentos favoritos, tiendas favoritas y calificaciones.
+-**Cloud SQL**: Para almacenar información de usuarios, productos, tiendas, etc.
+- **Cloud Storage**: Para almacenar imagenes de productos.
+- **Firebase Firestore**: Para almacenar información sobre roles de usuario, estado de subscripción,ultimo acceso, etc.
 - **Firebase Authentication**: Para manejar el registro e inicio de sesión de usuarios.
 - **Google Maps**: Para localizar las tiendas cercanas que ofrecen productos sin gluten.
 
 ## Características Principales
 - **Registro e inicio de sesión de usuarios**: Los usuarios pueden registrarse, iniciar sesión y gestionar su perfil.
-- **Modo Invitado**: Se permite la navegación limitada en modo invitado, con acceso a los productos recomendados y mapas, pero con restricciones para acceder a detalles completos.
-- **Alimentos y Tiendas Favoritas**: Los usuarios pueden marcar productos y tiendas como favoritos y gestionar sus preferencias.
+- **Modo Invitado**: Se permite la navegación limitada en modo invitado, sin acceso a los productos recomendados y mapas ni funcionalidades de usuario y barra de navegación, donde se busca que el usuario se registre o inicie sesión.
+- **Alimentos**: Los usuarios pueden marcar productos como favoritos y gestionar sus preferencias.
 - **Mapa de Locales Cercanos**: Visualización en mapa de los locales más cercanos con productos sin gluten.
 - **Escaneo de Códigos de Barras**: Escanea productos para verificar si son aptos para personas celíacas.
 
